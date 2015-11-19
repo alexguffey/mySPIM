@@ -37,6 +37,8 @@ int instruction_decode(unsigned op,struct_controls *controls)
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
 
+    *data1 = Reg[r1];
+    *data2 = Reg[r2];
 }
 
 
@@ -58,7 +60,16 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
-    if (MemWrite == 1)
+
+    if (MemRead == 1) {
+
+    }
+
+    if (MemWrite == 1) {
+
+    }
+
+    return 0;
 
 }
 
@@ -68,12 +79,18 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,char RegWrite,char RegDst,char MemtoReg,unsigned *Reg)
 {
 
+    if (RegWrite == 1) {
+
+    }
+
 }
 
 /* Alex: PC update */
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
 {
+
+    *PC += 4;
 
 }
 
