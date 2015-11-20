@@ -12,7 +12,18 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
-
+	//Move PC forward 
+	PC = PC >> 2;
+	
+	//Proper PC will always be evenly divisible by 4
+	if(PC % 4 == 0) {
+		*instruction = Mem[PC];
+		return 0;
+	}
+	//Out of whack Program Counter
+	else {
+		return 1;
+	}
 }
 
 
@@ -20,7 +31,14 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 /* 10 Points */
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
-
+	*op = //bits[31-26]
+	*r1 = //bits[25-21]
+	*r2 = //bits[20-16]
+	*r3 = //bits[15-11]
+	
+	*func = //bits[5-0]
+	*offset = //bits[15-0]
+	*jsec = //bits[25-0]
 }
 
 
@@ -29,7 +47,108 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
-
+	switch(op) {
+		case 0: //ALU does addition or "don't care"
+			controls->RegDst = ;
+			controls->Jump = ;
+			controls->Branch = ;
+			controls->MemRead = ;
+			controls->MemtoReg = ;
+			controls->ALUOp = ;
+			controls->MemWrite = ;
+			controls->ALUSrc = ;
+			controls->RegWrite = ;
+			break;
+			
+		case 1: //ALU does subtraction
+			controls->RegDst = ;
+			controls->Jump = ;
+			controls->Branch = ;
+			controls->MemRead = ;
+			controls->MemtoReg = ;
+			controls->ALUOp = ;
+			controls->MemWrite = ;
+			controls->ALUSrc = ;
+			controls->RegWrite = ;
+			break;
+			
+		case 2: //ALU does "set less than"
+			controls->RegDst = ;
+			controls->Jump = ;
+			controls->Branch = ;
+			controls->MemRead = ;
+			controls->MemtoReg = ;
+			controls->ALUOp = ;
+			controls->MemWrite = ;
+			controls->ALUSrc = ;
+			controls->RegWrite = ;
+			break;
+			
+		case 3: //ALU does "set less than unsigned"
+			controls->RegDst = ;
+			controls->Jump = ;
+			controls->Branch = ;
+			controls->MemRead = ;
+			controls->MemtoReg = ;
+			controls->ALUOp = ;
+			controls->MemWrite = ;
+			controls->ALUSrc = ;
+			controls->RegWrite = ;
+			break;
+			
+		case 4: //ALU does "and"
+			controls->RegDst = ;
+			controls->Jump = ;
+			controls->Branch = ;
+			controls->MemRead = ;
+			controls->MemtoReg = ;
+			controls->ALUOp = ;
+			controls->MemWrite = ;
+			controls->ALUSrc = ;
+			controls->RegWrite = ;
+			break;
+			
+		case 5: //ALU does "or"
+			controls->RegDst = ;
+			controls->Jump = ;
+			controls->Branch = ;
+			controls->MemRead = ;
+			controls->MemtoReg = ;
+			controls->ALUOp = ;
+			controls->MemWrite = ;
+			controls->ALUSrc = ;
+			controls->RegWrite = ;
+			break;
+			
+		case 6:  //ALU will shift left extended value by 16 bits 
+			controls->RegDst = ;
+			controls->Jump = ;
+			controls->Branch = ;
+			controls->MemRead = ;
+			controls->MemtoReg = ;
+			controls->ALUOp = ;
+			controls->MemWrite = ;
+			controls->ALUSrc = ;
+			controls->RegWrite = ;
+			break;
+			
+		case 7: //R-type instruction
+			controls->RegDst = ;
+			controls->Jump = ;
+			controls->Branch = ;
+			controls->MemRead = ;
+			controls->MemtoReg = ;
+			controls->ALUOp = ;
+			controls->MemWrite = ;
+			controls->ALUSrc = ;
+			controls->RegWrite = ;
+			break;
+			
+		default: //invalid instruction
+			return 1;
+			break;
+	}
+	return 0;
 }
 
 /* Read Register */
