@@ -31,14 +31,33 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 /* 10 Points */
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
-	*op = //bits[31-26]
-	*r1 = //bits[25-21]
-	*r2 = //bits[20-16]
-	*r3 = //bits[15-11]
+	//need masks of different sizes
+	//5-bits
+	unsigned rtypePart = 0b 00000000000000000000000000011111;
+	//6-bits
+	unsigned functPart = 0b 00000000000000000000000000111111;
+	//16-bits
+	unsigned offsetPart = 0b 00000000000000001111111111111111;
+	//26-bits
+	unsigned jsecPart = 0b 0000001111111111111111111111111;
 	
-	*func = //bits[5-0]
-	*offset = //bits[15-0]
-	*jsec = //bits[25-0]
+	//shift values down, apply masks
+	//bits[31-26]
+	*op = (instruction >> 26) & functPart;
+	//bits[25-21]
+	*r1 = (instruction >> 21) & rtypePart;
+	//bits[20-16]
+	*r2 = (instruction >> 16) & rtypePart;
+	//bits[15-11]
+	*r3 = (instruction >> 11) & rtypePart;
+	//bits[5-0]
+	*func = instruction & rtypePart;
+
+	//bits[15-0] for I-type
+	*offset = instruction & offsetPart;
+	
+	//bits[25-0] for J-type
+	*jsec = instruction & jsecPart;
 }
 
 
@@ -148,6 +167,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
 			return 1;
 			break;
 	}
+	
 	return 0;
 }
 
