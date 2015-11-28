@@ -68,15 +68,15 @@ int instruction_decode(unsigned op,struct_controls *controls)
 {
 	switch(op) {
 		case 0: //ALU does addition or "don't care"
-			controls->RegDst = ;
-			controls->Jump = ;
-			controls->Branch = ;
-			controls->MemRead = ;
-			controls->MemtoReg = ;
+			controls->RegDst = 1;
+			controls->Jump = 0;
+			controls->Branch = 0;
+			controls->MemRead = 0;
+			controls->MemtoReg = 0;
 			controls->ALUOp = ;
-			controls->MemWrite = ;
+			controls->MemWrite = 0;
 			controls->ALUSrc = ;
-			controls->RegWrite = ;
+			controls->RegWrite = 1;
 			break;
 			
 		case 1: //ALU does subtraction
