@@ -51,7 +51,18 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
+    //Move PC forward
+	PC = PC >> 2;
 
+	//Proper PC will always be evenly divisible by 4
+	if(PC % 4 == 0) {
+		*instruction = Mem[PC];
+		return 0;
+	}
+	//Out of whack Program Counter
+	else {
+		return 1;
+	}
 }
 
 
@@ -59,6 +70,34 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 /* 10 Points */
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
+
+    //need masks of different sizes
+	//5-bits
+	unsigned rtypePart = 0x1f;
+	//6-bits
+	unsigned functPart = 0x0000003f;
+	//16-bits
+	unsigned offsetPart = 0x0000ffff;
+	//26-bits
+	unsigned jsecPart = 0x03ffffff;
+
+	//shift values down, apply masks
+	//bits[31-26]
+	*op = (instruction >> 26) & functPart;
+	//bits[25-21]
+	*r1 = (instruction >> 21) & rtypePart;
+	//bits[20-16]
+	*r2 = (instruction >> 16) & rtypePart;
+	//bits[15-11]
+	*r3 = (instruction >> 11) & rtypePart;
+	//bits[5-0]
+	*func = instruction & rtypePart;
+
+	//bits[15-0] for I-type
+	*offset = instruction & offsetPart;
+
+	//bits[25-0] for J-type
+	*jsec = instruction & jsecPart;
 
 }
 
@@ -69,13 +108,118 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 int instruction_decode(unsigned op,struct_controls *controls)
 {
 
+    switch(op) {
+		case 0:   // r-type
+        controls->RegDst = 1;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemtoReg = 0;
+        controls->ALUOp = 7;
+        controls->MemWrite = 0;
+        controls->ALUSrc = 0;
+        controls->RegWrite = 1;
+        break;
+    case 2:  // jump
+        controls->RegDst = 0;
+        controls->Jump = 1;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemtoReg = 0;
+        controls->ALUOp = 0;
+        controls->MemWrite = 0;
+        controls->ALUSrc = 0;
+        controls->RegWrite = 0;
+        break;
+    case 4:  // beq
+        controls->RegDst = 2;
+        controls->Jump = 0;
+        controls->Branch = 1;
+        controls->MemRead = 0;
+        controls->MemtoReg = 2;
+        controls->ALUOp = 1;
+        controls->MemWrite = 0;
+        controls->ALUSrc = 1;
+        controls->RegWrite = 0;
+        break;
+    case 8:   // addi
+        controls->RegDst = 0;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemtoReg = 0;
+        controls->ALUOp = 0;
+        controls->MemWrite = 0;
+        controls->ALUSrc = 1;
+        controls->RegWrite = 1;
+        break;
+    case 10:  // slti
+        controls->RegDst = 0;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemtoReg = 0;
+        controls->ALUOp = 2;
+        controls->MemWrite = 0;
+        controls->ALUSrc = 1;
+        controls->RegWrite = 0;
+        break;
+    case 11:  // sltiu
+        controls->RegDst = 0;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemtoReg = 0;
+        controls->ALUOp = 3;
+        controls->MemWrite = 0;
+        controls->ALUSrc = 1;
+        controls->RegWrite = 0;
+        break;
+    case 15:  // lui
+        controls->RegDst = 0;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemtoReg = 0;
+        controls->ALUOp = 6;
+        controls->MemWrite = 0;
+        controls->ALUSrc = 1;
+        controls->RegWrite = 1;
+        break;
+    case 35:  // lw
+        controls->RegDst = 0;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 1;
+        controls->MemtoReg = 1;
+        controls->ALUOp = 0;
+        controls->MemWrite = 0;
+        controls->ALUSrc = 1;
+        controls->RegWrite = 1;
+        break;
+    case 43:  // sw
+        controls->RegDst = 2;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemtoReg = 2;
+        controls->ALUOp = 0;
+        controls->MemWrite = 1;
+        controls->ALUSrc = 1;
+        controls->RegWrite = 0;
+        break;
+    default: //invalid instruction
+        return 1;
+        break;
+	}
+
+	return 0;
 }
 
 /* Alex: Read Register */
 /* 5 Points */
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
-
     // Read the registers addressed by r1 and r2 from Reg, and write the read values to data1 and data2 respectively.
     *data1 = Reg[r1];
     *data2 = Reg[r2];
