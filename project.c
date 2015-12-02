@@ -33,13 +33,13 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 {
 	//need masks of different sizes
 	//5-bits
-	unsigned rtypePart = 0b 00000000000000000000000000011111;
+	unsigned rtypePart = 0x1f;
 	//6-bits
-	unsigned functPart = 0b 00000000000000000000000000111111;
+	unsigned functPart = 0x0000003f;
 	//16-bits
-	unsigned offsetPart = 0b 00000000000000001111111111111111;
+	unsigned offsetPart = 0x0000ffff;
 	//26-bits
-	unsigned jsecPart = 0b 0000001111111111111111111111111;
+	unsigned jsecPart = 0x03ffffff;
 	
 	//shift values down, apply masks
 	//bits[31-26]
@@ -75,7 +75,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
 			controls->MemtoReg = 0;
 			controls->ALUOp = ;
 			controls->MemWrite = 0;
-			controls->ALUSrc = ;
+			controls->ALUSrc = 1;
 			controls->RegWrite = 1;
 			break;
 			
@@ -152,15 +152,15 @@ int instruction_decode(unsigned op,struct_controls *controls)
 			break;
 			
 		case 7: //R-type instruction
-			controls->RegDst = ;
-			controls->Jump = ;
-			controls->Branch = ;
-			controls->MemRead = ;
-			controls->MemtoReg = ;
-			controls->ALUOp = ;
-			controls->MemWrite = ;
-			controls->ALUSrc = ;
-			controls->RegWrite = ;
+			controls->RegDst = 1;
+			controls->Jump = 0;
+			controls->Branch = 0;
+			controls->MemRead = 0;
+			controls->MemtoReg = 0;
+			controls->ALUOp = 7;
+			controls->MemWrite = 0;
+			controls->ALUSrc = 0;
+			controls->RegWrite = 1;
 			break;
 			
 		default: //invalid instruction
