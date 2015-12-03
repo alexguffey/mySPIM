@@ -5,46 +5,33 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-  if(ALUControl=='000')
-    ALUresult=A+B;
-  if(ALUControl=='001')
-    ALUresult=A-B;
-  if(ALUControl=='010')
-  {
+  if(ALUControl==0)
+    *ALUresult=A+B;
+  if(ALUControl==1)
+    *ALUresult=A-B;
+  if(ALUControl==2)
+    if((signed)A<(signed)B)
+      *ALUresult=1;
+    else
+      *ALUresult=0;
+  if(ALUControl==3)
     if(A<B)
-      ALUresult=1;
+      *ALUresult=1;
     else
-      ALUresult=0;
-  }
-  if(ALUControl=='011')
-  {
-    if(A<B)
-      ALUresult=1;
-    else
-      ALUresult=0;
-  }
-  if(ALUControl=='100')
-  {
-    if(A&&B)
-      ALUresult=1;
-    else
-      ALUresult=0;
-  }
-  if(ALUControl=='101')
-  {
-    if(A||B)
-      ALUresult=1;
-    else
-      ALUresult=0;
-  }
-  if(ALUControl=='110')
-  {
-    B<<16;
-  }
-  if(ALUControl=='111')
-    ALUresult=!A;
-  if(ALUresult==0)
+      *ALUresult=0;
+  if(ALUControl==4)
+    *ALUresult = A&B;
+  if(ALUControl==5)
+    *ALUresult = A|B;
+  if(ALUControl==6)
+    *ALUresult=B<<16;
+
+  if(ALUControl==7)
+    *ALUresult=~A;
+  if(*ALUresult==0)
     Zero=1;
+  else
+    Zero=0;
 }
 
 /* Trevor: instruction fetch */
@@ -230,14 +217,47 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-
+  unsigned temp = offset>>15;
+  if(temp==1)
+    *extended_value=(0xFFFF0000)|offset;
+  else
+    *extended_value=offset;
 }
 
 /* Hassan: ALU operations */
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
-
+  if(ALUsrc==1)
+    data2=extended_value;
+  //Not R-type 0-6
+  if((ALUOp==0)||(ALUOp==1)||(ALUOp==2)||(ALUOp==3)||(ALUOp==4)||(ALUOp==5)||(ALUOp==6))
+    ALU(data1,data2,ALUOp,ALUresult,Zero);
+    //R-type
+  else if(ALUOp==7)
+  {
+    if(funct==32)
+      ALU(data1,data2,0,ALUresult,Zero);
+    else if(funct==34)
+      ALU(data1,data2,1,ALUresult,Zero);
+    else if(funct==42)
+      ALU(data1,data2,2,ALUresult,Zero);
+    else if(funct==43)
+      ALU(data1,data2,3,ALUresult,Zero);
+    else if(funct==36)
+      ALU(data1,data2,4,ALUreult,Zero);
+    else if(funct==37)
+      ALU(data1,data2,5,ALUresult,Zero);
+    else if(fucnt==6)
+      ALU(data1,data2,6,ALUresult,Zero);
+    else if(funct==39)
+      ALU(data1,data2,7,ALUresult,Zero);
+    else
+      return 1;
+  }
+  else
+    return 1;
+  return 0;
 }
 
 /* Alex: Read / Write Memory */
